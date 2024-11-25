@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import ConflictError from '../errors/conflict-error';
 import Product from '../models/product';
 
-export const createProduct = (req: Request, res: Response): void => {
+export const createProduct = (req: Request, res: Response, next: NextFunction): void => {
   const {
     title,
     image,
@@ -21,17 +22,17 @@ export const createProduct = (req: Request, res: Response): void => {
       res.status(201).send({ data: product });
     })
     .catch((error) => {
-      console.error('Ошибка при создании товара:', error);
-      res.status(500).send({ message: 'Ошибка при создании товара' });
+      if (error instanceof Error && error.message.includes('E11000')) {
+        return next(new ConflictError(error.message));
+      }
+      return next(error);
     });
 };
 
-export const getProducts = (_req: Request, res: Response): void => {
+export const getProducts = (_req: Request, res: Response, next: NextFunction): void => {
   Product.find()
     .then((products) => {
       res.status(200).json({ items: products, total: products.length });
     })
-    .catch((error) => {
-      res.status(500).json({ message: 'Ошибка сервера', error });
-    });
+    .catch((error) => next(error));
 };

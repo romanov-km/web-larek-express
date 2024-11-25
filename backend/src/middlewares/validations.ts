@@ -1,4 +1,9 @@
-import { celebrate, Joi, Segments } from 'celebrate';
+import { Joi } from 'celebrate';
+
+export enum PaymentType {
+  Card = 'card',
+  Online = 'online'
+}
 
 export interface IOrder {
   total: number;
@@ -7,11 +12,6 @@ export interface IOrder {
   address: string;
   items: string[];
   payment: PaymentType;
-}
-
-export enum PaymentType {
-  Card = 'card',
-  Online = 'online'
 }
 
 export const imageSchema = Joi.object({
@@ -30,8 +30,8 @@ export const orderSchema = Joi.object({
 
 export const productSchema = Joi.object({
   title: Joi.string().required().min(3).max(30),
-  image: imageSchema.required,
+  image: imageSchema.required(),
   category: Joi.string().required(),
   description: Joi.string(),
-  price: Joi.number(),
+  price: Joi.number().allow(null),
 });
