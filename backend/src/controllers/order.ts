@@ -34,12 +34,12 @@ const createOrder = async (
     const orderId = faker.string.uuid();
 
     // Возврат успешного ответа
-    res.status(201).json({
+    return res.status(201).json({
       id: orderId,
       total: calculatedTotal,
     });
   } catch (error) {
-    next(error); // Передача ошибки в централизованный обработчик
+    return next(error); // Передача ошибки в централизованный обработчик
   }
 };
 
